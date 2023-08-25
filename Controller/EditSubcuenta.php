@@ -144,6 +144,7 @@ class EditSubcuenta extends ParentController
     }
 
     /**
+     * get the total of the partidas checked or not.
      *
      * @param bool $checked
      * @return float
