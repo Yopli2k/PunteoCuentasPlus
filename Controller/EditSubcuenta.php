@@ -19,12 +19,12 @@
  */
 namespace FacturaScripts\Plugins\PunteoCuentasPlus\Controller;
 
+use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Controller\EditSubcuenta as ParentController;
 use FacturaScripts\Dinamic\Model\Partida;
-use FacturaScripts\Dinamic\Model\Subcuenta;
 use FacturaScripts\Dinamic\Model\TotalModel;
 
 /**
@@ -127,17 +127,35 @@ class EditSubcuenta extends ParentController
                     continue;
                 }
 
+                // make the entry editable.
+                $entry = $line->getAccountingEntry();
+                $isEditable = $entry->editable;
+                if (false === $isEditable) {
+                    $entry->editable = true;
+                    if (false === $entry->save()) {
+                        $this->toolBox()->i18nLog()->warning('entry-save-error', ['%code%' => $entry->numero]);
+                        continue;
+                    }
+                }
+
+                // change the subaccount.
                 $line->idsubcuenta = $subAccount->idsubcuenta;
                 $line->codsubcuenta = $subAccount->codsubcuenta;
                 if (false === $line->save()) {
                     throw new Exception(
-                        $this->toolBox()->i18nLog()->error('partida-save-error', ['%code%' => $line->idpartida])
+                        $this->toolBox()->i18n()->trans('partida-save-error', ['%code%' => $line->idpartida])
                     );
+                }
+
+                // Restore the editable status.
+                if (false === $isEditable) {
+                    $entry->editable = false;
+                    $entry->save();
                 }
             }
             $this->dataBase->commit();
             $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-        } catch (\Exception $exc) {
+        } catch (Exception $exc) {
             $this->dataBase->rollback();
             $this->toolBox()->log()->error($exc->getMessage());
         }
