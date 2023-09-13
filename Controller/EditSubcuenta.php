@@ -66,6 +66,7 @@ class EditSubcuenta extends ParentController
     protected function createViewsLines(string $viewName = 'ListPartidaAsiento')
     {
         parent::createViewsLines();
+        $this->setSettings($viewName, 'btnPrint', true);
         $i18n = ToolBox::i18n();
         $this->views[$viewName]->addFilterSelectWhere('status', [
             ['label' => $i18n->trans('all'), 'where' => []],
