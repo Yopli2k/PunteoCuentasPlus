@@ -24,6 +24,8 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Controller\EditSubcuenta as ParentController;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\TotalModel;
 
@@ -32,11 +34,14 @@ use FacturaScripts\Dinamic\Model\TotalModel;
  *   - additionals filters
  *   - butons statistics.
  *   - massive change of the subaccount.
+ *   - add attached files.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditSubcuenta extends ParentController
 {
+    use DocFilesTrait;
+
     /**
      * Returns the total of the checked partidas.
      *
@@ -55,6 +60,15 @@ class EditSubcuenta extends ParentController
     public function getUnChecked(): string
     {
         return DivisaTools::format($this->getTotal(false));
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->addHtmlView('docfiles', 'Tab/PreviewFiles', 'AttachedFileRelation', 'files', 'fas fa-paperclip');
     }
 
     /**
@@ -91,12 +105,44 @@ class EditSubcuenta extends ParentController
      */
     protected function execPreviousAction($action)
     {
-        if ($action === 'change-account') {
-            $this->changeAccountAction();
-            return true;
-        }
+        switch ($action) {
+            case 'add-file':
+                return $this->addFileAction();
 
-        return parent::execPreviousAction($action);
+            case 'delete-file':
+                return $this->deleteFileAction();
+
+            case 'edit-file':
+                return $this->editFileAction();
+
+            case 'unlink-file':
+                return $this->unlinkFileAction();
+
+            case 'change-account':
+                $this->changeAccountAction();
+                return true;
+
+            default:
+                return parent::execPreviousAction($action);
+        }
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'docfiles':
+                $this->loadDataDocFiles($view, $this->getModelClassName(), $this->getModel()->primaryColumnValue());
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+        }
     }
 
     /**
@@ -105,7 +151,7 @@ class EditSubcuenta extends ParentController
      *   - For each selected partida change the account.
      *   - If the account don't exist into the exercise, show a warning.
      */
-    private function changeAccountAction()
+    private function changeAccountAction(): void
     {
         $data = $this->request->request->all();
         $codes = $data['code'] ?? '';

@@ -5,7 +5,13 @@ Fácil y potente.
 
 # PunteoCuentasPlus
 Plugin para FacturaScripts que añade nuevas opciones al punteo de subcuentas contables
-incluido en el Core de Facturascripts.
+incluido en el Core de Facturascripts:
+<ul>
+    <li>Nuevos filtros de búsqueda.</li>
+    <li>Botones estadísticos con los totales (punteado y no punteado).</li>
+    <li>Cambio masivo de subcuenta. Permite cambiar una subcuenta por otra en todas sus partidas.</li>
+    <li>Posibilidad de adjuntar archivos a las subcuentas.</li>
+</ul>
 
 ## Nombre de carpeta
 Como con todos los plugins, la carpeta se debe llamar igual que el plugin. En este caso **PunteoCuentasPlus**.
