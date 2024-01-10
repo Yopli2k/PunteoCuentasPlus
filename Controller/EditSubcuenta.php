@@ -22,7 +22,7 @@ namespace FacturaScripts\Plugins\PunteoCuentasPlus\Controller;
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DivisaTools;
-use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Controller\EditSubcuenta as ParentController;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
@@ -31,8 +31,8 @@ use FacturaScripts\Dinamic\Model\TotalModel;
 
 /**
  * Add to EditSubcuenta:
- *   - additionals filters
- *   - butons statistics.
+ *   - additional filters
+ *   - buttons statistics.
  *   - massive change of the subaccount.
  *   - add attached files.
  *
@@ -76,12 +76,13 @@ class EditSubcuenta extends ParentController
      *
      * @param string $viewName
      * @return void
+     * @throws Exception
      */
     protected function createViewsLines(string $viewName = 'ListPartidaAsiento')
     {
         parent::createViewsLines();
         $this->setSettings($viewName, 'btnPrint', true);
-        $i18n = ToolBox::i18n();
+        $i18n = Tools::lang();
         $this->views[$viewName]->addFilterSelectWhere('status', [
             ['label' => $i18n->trans('all'), 'where' => []],
             ['label' => $i18n->trans('unchecked'), 'where' => [new DataBaseWhere('punteada', false)]],
@@ -149,7 +150,7 @@ class EditSubcuenta extends ParentController
      * Change the account of the selected partidas.
      *   - Check the request data.
      *   - For each selected partida change the account.
-     *   - If the account don't exist into the exercise, show a warning.
+     *   - If the account doesn't exist into the exercise, show a warning.
      */
     private function changeAccountAction(): void
     {
@@ -201,10 +202,10 @@ class EditSubcuenta extends ParentController
                 }
             }
             $this->dataBase->commit();
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            Tools::log()->notice('record-updated-correctly');
         } catch (Exception $exc) {
             $this->dataBase->rollback();
-            $this->toolBox()->log()->error($exc->getMessage());
+            Tools::log()->error($exc->getMessage());
         }
     }
 
