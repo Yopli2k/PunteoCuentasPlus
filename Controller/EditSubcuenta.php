@@ -78,7 +78,7 @@ class EditSubcuenta extends ParentController
      * @return void
      * @throws Exception
      */
-    protected function createViewsLines(string $viewName = 'ListPartidaAsiento')
+    protected function createViewsLines(string $viewName = 'ListPartidaAsiento'): void
     {
         parent::createViewsLines();
         $this->setSettings($viewName, 'btnPrint', true);
@@ -157,7 +157,7 @@ class EditSubcuenta extends ParentController
         $data = $this->request->request->all();
         $codes = $data['code'] ?? '';
         if (empty($codes) || empty($data['new_code']) || empty($data['codsubcuenta'])) {
-            ToolBox::i18nLog()->warning('change-subaccount-data-error');
+            Tools::log()->warning('change-subaccount-data-error');
             return;
         }
 
@@ -171,7 +171,7 @@ class EditSubcuenta extends ParentController
 
                 $subAccount = $line->getSubcuenta($data['new_code']);
                 if (empty($subAccount->idsubcuenta)) {
-                    $this->toolBox()->i18nLog()->warning('subaccount-not-found', ['%subAccountCode%' => $data['new_code']]);
+                    Tools::log()->warning('subaccount-not-found', ['%subAccountCode%' => $data['new_code']]);
                     continue;
                 }
 
@@ -181,7 +181,7 @@ class EditSubcuenta extends ParentController
                 if (false === $isEditable) {
                     $entry->editable = true;
                     if (false === $entry->save()) {
-                        $this->toolBox()->i18nLog()->warning('entry-save-error', ['%code%' => $entry->numero]);
+                        Tools::log()->warning('entry-save-error', ['%code%' => $entry->numero]);
                         continue;
                     }
                 }
@@ -191,7 +191,7 @@ class EditSubcuenta extends ParentController
                 $line->codsubcuenta = $subAccount->codsubcuenta;
                 if (false === $line->save()) {
                     throw new Exception(
-                        $this->toolBox()->i18n()->trans('partida-save-error', ['%code%' => $line->idpartida])
+                        Tools::lang()->trans('partida-save-error', ['%code%' => $line->idpartida])
                     );
                 }
 
