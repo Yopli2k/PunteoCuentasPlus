@@ -21,7 +21,6 @@ namespace FacturaScripts\Plugins\PunteoCuentasPlus\Controller;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Controller\EditSubcuenta as ParentController;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
@@ -49,7 +48,7 @@ class EditSubcuenta extends ParentController
      */
     public function getChecked(): string
     {
-        return DivisaTools::format($this->getTotal(true));
+        return Tools::money($this->getTotal(true));
     }
 
     /**
@@ -59,7 +58,7 @@ class EditSubcuenta extends ParentController
      */
     public function getUnChecked(): string
     {
-        return DivisaTools::format($this->getTotal(false));
+        return Tools::money($this->getTotal(false));
     }
 
     /**
@@ -138,7 +137,12 @@ class EditSubcuenta extends ParentController
     {
         switch ($viewName) {
             case 'docfiles':
-                $this->loadDataDocFiles($view, $this->getModelClassName(), $this->getModel()->primaryColumnValue());
+                $modelid = $this->getModel()->primaryColumnValue();
+                $where = [new DataBaseWhere('model', $this->getModelClassName())];
+                $where[] = is_numeric($modelid)
+                    ? new DataBaseWhere('modelid|modelcode', $modelid)
+                    : new DataBaseWhere('modelcode', $modelid);
+                $view->loadData('', $where, ['creationdate' => 'DESC'], 0, 0);
                 break;
 
             default:
