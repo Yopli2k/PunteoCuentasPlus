@@ -67,7 +67,7 @@ class EditSubcuenta extends ParentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addHtmlView('docfiles', 'Tab/PreviewFiles', 'AttachedFileRelation', 'files', 'fas fa-paperclip');
+        $this->addHtmlView('docfiles', 'Tab/PreviewFiles', 'AttachedFileRelation', 'files', 'fa-solid fa-paperclip');
     }
 
     /**
@@ -92,7 +92,7 @@ class EditSubcuenta extends ParentController
             'action' => 'change-account',
             'label' => 'change',
             'color' => 'danger',
-            'icon' => 'fas fa-recycle',
+            'icon' => 'fa-solid fa-recycle',
             'type' => 'modal',
         ]);
     }
@@ -137,7 +137,7 @@ class EditSubcuenta extends ParentController
     {
         switch ($viewName) {
             case 'docfiles':
-                $modelid = $this->getModel()->primaryColumnValue();
+                $modelid = $this->getModel()->id();
                 $where = [new DataBaseWhere('model', $this->getModelClassName())];
                 $where[] = is_numeric($modelid)
                     ? new DataBaseWhere('modelid|modelcode', $modelid)
@@ -169,7 +169,7 @@ class EditSubcuenta extends ParentController
         try {
             foreach (explode(',', $codes) as $idline) {
                 $line = new Partida();
-                if (false === $line->loadFromCode($idline)) {
+                if (false === $line->load($idline)) {
                     continue;
                 }
 

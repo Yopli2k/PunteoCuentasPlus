@@ -14,13 +14,13 @@
 <view>
     <rows>
         <row type="statistics">
-            <datalabel icon="fas fa-check-double" label="checked" color="info" function="getChecked"/>
-            <datalabel icon="far fa-square" label="unchecked" color="warning" function="getUnChecked"/>
+            <datalabel icon="fa-solid fa-check-double" label="checked" color="info" function="getChecked"/>
+            <datalabel icon="fa-regular fa-square" label="unchecked" color="warning" function="getUnChecked"/>
         </row>
     </rows>
 
     <modals>
-        <group name="change-account" title="change-account" icon="fas fa-recycle">
+        <group name="change-account" title="change-account" icon="fa-solid fa-recycle">
             <column name="old-subaccount" display="none">
                 <widget type="text" fieldname="codsubcuenta" />
             </column>
