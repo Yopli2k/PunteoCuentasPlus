@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of PunteoCuentasPlus plugin for FacturaScripts.
- * FacturaScripts    Copyright (C) 2015-2024 Carlos Garcia Gomez <carlos@facturascripts.com>
- * PunteoCuentasPlus Copyright (C) 2023-2024 Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * FacturaScripts    Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * PunteoCuentasPlus Copyright (C) 2023-2025 Jose Antonio Cuello Principal <yopli2000@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -79,14 +79,16 @@ class EditSubcuenta extends ParentController
      */
     protected function createViewsLines(string $viewName = 'ListPartidaAsiento'): void
     {
-        parent::createViewsLines();
-        $this->setSettings($viewName, 'btnPrint', true);
+        parent::createViewsLines($viewName);
+
         $i18n = Tools::lang();
-        $this->views[$viewName]->addFilterSelectWhere('status', [
-            ['label' => $i18n->trans('all'), 'where' => []],
-            ['label' => $i18n->trans('unchecked'), 'where' => [new DataBaseWhere('punteada', false)]],
-            ['label' => $i18n->trans('checked'), 'where' => [new DataBaseWhere('punteada', true)]],
-        ]);
+        $view = $this->listView($viewName);
+        $view->setSettings('btnPrint', true)
+            ->addFilterSelectWhere('status', [
+                ['label' => $i18n->trans('all'), 'where' => []],
+                ['label' => $i18n->trans('unchecked'), 'where' => [new DataBaseWhere('punteada', false)]],
+                ['label' => $i18n->trans('checked'), 'where' => [new DataBaseWhere('punteada', true)]],
+            ]);
 
         $this->addButton($viewName, [
             'action' => 'change-account',
@@ -105,26 +107,14 @@ class EditSubcuenta extends ParentController
      */
     protected function execPreviousAction($action)
     {
-        switch ($action) {
-            case 'add-file':
-                return $this->addFileAction();
-
-            case 'delete-file':
-                return $this->deleteFileAction();
-
-            case 'edit-file':
-                return $this->editFileAction();
-
-            case 'unlink-file':
-                return $this->unlinkFileAction();
-
-            case 'change-account':
-                $this->changeAccountAction();
-                return true;
-
-            default:
-                return parent::execPreviousAction($action);
-        }
+        return match ($action) {
+            'add-file' => $this->addFileAction(),
+            'delete-file' => $this->deleteFileAction(),
+            'edit-file' => $this->editFileAction(),
+            'unlink-file' => $this->unlinkFileAction(),
+            'change-account' => $this->changeAccountAction(),
+            default => parent::execPreviousAction($action),
+        };
     }
 
     /**
@@ -156,13 +146,13 @@ class EditSubcuenta extends ParentController
      *   - For each selected partida change the account.
      *   - If the account doesn't exist into the exercise, show a warning.
      */
-    private function changeAccountAction(): void
+    private function changeAccountAction(): bool
     {
         $data = $this->request->request->all();
         $codes = $data['code'] ?? '';
         if (empty($codes) || empty($data['new_code']) || empty($data['codsubcuenta'])) {
             Tools::log()->warning('change-subaccount-data-error');
-            return;
+            return true;
         }
 
         $this->dataBase->beginTransaction();
@@ -211,6 +201,7 @@ class EditSubcuenta extends ParentController
             $this->dataBase->rollback();
             Tools::log()->error($exc->getMessage());
         }
+        return true;
     }
 
     /**
