@@ -20,11 +20,11 @@
 namespace FacturaScripts\Plugins\PunteoCuentasPlus\Controller;
 
 use Exception;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Controller\EditSubcuenta as ParentController;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\TotalModel;
 
@@ -81,13 +81,12 @@ class EditSubcuenta extends ParentController
     {
         parent::createViewsLines($viewName);
 
-        $i18n = Tools::lang();
         $view = $this->listView($viewName);
         $view->setSettings('btnPrint', true)
             ->addFilterSelectWhere('status', [
-                ['label' => $i18n->trans('all'), 'where' => []],
-                ['label' => $i18n->trans('unchecked'), 'where' => [new DataBaseWhere('punteada', false)]],
-                ['label' => $i18n->trans('checked'), 'where' => [new DataBaseWhere('punteada', true)]],
+                ['label' => Tools::trans('all'), 'where' => []],
+                ['label' => Tools::trans('unchecked'), 'where' => [Where::eq('punteada', false)]],
+                ['label' => Tools::trans('checked'), 'where' => [Where::eq('punteada', true)]],
             ]);
 
         $this->addButton($viewName, [
@@ -128,10 +127,10 @@ class EditSubcuenta extends ParentController
         switch ($viewName) {
             case 'docfiles':
                 $modelid = $this->getModel()->id();
-                $where = [new DataBaseWhere('model', $this->getModelClassName())];
+                $where = [Where::eq('model', $this->getModelClassName())];
                 $where[] = is_numeric($modelid)
-                    ? new DataBaseWhere('modelid|modelcode', $modelid)
-                    : new DataBaseWhere('modelcode', $modelid);
+                    ? Where::eq('modelid|modelcode', $modelid)
+                    : Where::eq('modelcode', $modelid);
                 $view->loadData('', $where, ['creationdate' => 'DESC'], 0, 0);
                 break;
 
@@ -185,7 +184,7 @@ class EditSubcuenta extends ParentController
                 $line->codsubcuenta = $subAccount->codsubcuenta;
                 if (false === $line->save()) {
                     throw new Exception(
-                        Tools::lang()->trans('partida-save-error', ['%code%' => $line->idpartida])
+                        Tools::trans('partida-save-error', ['%code%' => $line->idpartida])
                     );
                 }
 
@@ -214,8 +213,8 @@ class EditSubcuenta extends ParentController
     {
         $idsubcuenta = $this->request->query->get('code');
         $where = [
-            new DataBaseWhere('idsubcuenta', $idsubcuenta),
-            new DataBaseWhere('punteada', $checked),
+            Where::eq('idsubcuenta', $idsubcuenta),
+            Where::eq('punteada', $checked),
         ];
         $fields = ['debe' => 'SUM(debe)', 'haber' => 'SUM(haber)'];
         $result = 0.00;
