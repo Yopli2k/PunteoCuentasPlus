@@ -18,10 +18,8 @@ Como con todos los plugins, la carpeta se debe llamar igual que el plugin. En es
 
 
 ## Más información
-<ul>
-    <li>General info: https://www.facturascripts.com</li>
-    <li>Plugin info:  https://www.facturascripts.com/plugins/punteocuentasplus</li>
-</ul>
+- [Información general](https://www.facturascripts.com)
+- [Información del plugin](https://www.facturascripts.com/plugins/punteocuentasplus)
 
 
 ## Documentación / Issues / Feedback
@@ -33,12 +31,10 @@ https://www.facturascripts.com
 - [Cómo instalar FacturaScripts en Windows](https://facturascripts.com/instalar-windows)
 
 ## Otros plugins del mismo autor
-<ul>
-    <li>Documentos Recurrentes: https://facturascripts.com/plugins/documentosrecurrentes</li>
-    <li>Recursos Humanos: https://facturascripts.com/plugins/humanresources</li>
-    <li>Producción: https://facturascripts.com/plugins/produccion</li>
-    <li>Producto Pack: https://facturascripts.com/plugins/productopack</li>
-    <li>Pagos Múltiples: https://facturascripts.com/plugins/pagosmultiples</li>
-    <li>LawFirm: Solición sectorial para despachos de abogacía</li>
-    <li>CourseManagement: Solición sectorial para gestión de cursos de formación subvencionados</li>
-</ul>
+- [Documentos Recurrentes](https://facturascripts.com/plugins/documentosrecurrentes): Generación periódica de facturas, albaranes, pedidos y presupuestos de compra y venta
+- [Recursos Humanos](https://facturascripts.com/plugins/humanresources): Gestión del personal, sus datos laborales y control de presencia
+- [Producción](https://facturascripts.com/plugins/produccion): Fabricación de artículos a partir de otros del almacén mediante recetas
+- [Producto Pack](https://facturascripts.com/plugins/productopack): Productos formados por un conjunto de otros productos que se desglosan en los documentos
+- [Pagos Múltiples](https://facturascripts.com/plugins/pagosmultiples): Cobros y pagos de varios recibos en un único asiento contable y gestión de talones
+- [LawFirm](https://facturascripts.com/plugins/lawfirm): Solución sectorial para despachos de abogacía
+- CourseManagement: Solución sectorial para gestión de cursos de formación subvencionados
