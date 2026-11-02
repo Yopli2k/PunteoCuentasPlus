@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of PunteoCuentasPlus plugin for FacturaScripts.
- * FacturaScripts    Copyright (C) 2015-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * FacturaScripts    Copyright (C) 2015-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  * PunteoCuentasPlus Copyright (C) 2023-2025 Jose Antonio Cuello Principal <yopli2000@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Core\Where;
 use FacturaScripts\Dinamic\Model\Partida;
+use FacturaScripts\Dinamic\Model\Subcuenta;
 use FacturaScripts\Dinamic\Model\TotalModel;
 
 /**
@@ -141,30 +142,43 @@ class EditSubcuenta extends ParentController
 
     /**
      * Change the account of the selected partidas.
-     *   - Check the request data.
-     *   - For each selected partida change the account.
+     *   - Check the update permission and the form token.
+     *   - Only the partidas of the subaccount being edited are changed.
      *   - If the account doesn't exist into the exercise, show a warning.
      */
     private function changeAccountAction(): bool
     {
-        $data = $this->request->request->all();
-        $codes = $data['code'] ?? '';
-        if (empty($codes) || empty($data['new_code']) || empty($data['codsubcuenta'])) {
+        if (false === $this->permissions->allowUpdate) {
+            Tools::log()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
+            return true;
+        }
+
+        $ids = $this->request->request->getArray('codes');
+        $newCode = $this->request->input('new_code');
+        if (empty($ids) || empty($newCode)) {
             Tools::log()->warning('change-subaccount-data-error');
             return true;
         }
 
+        $currentSubAccount = new Subcuenta();
+        if (false === $currentSubAccount->load($this->request->queryOrInput('code'))) {
+            Tools::log()->warning('record-not-found');
+            return true;
+        }
+
+        $where = [
+            Where::in('idpartida', $ids),
+            Where::eq('idsubcuenta', $currentSubAccount->idsubcuenta),
+        ];
+
         $this->dataBase->beginTransaction();
         try {
-            foreach (explode(',', $codes) as $idline) {
-                $line = new Partida();
-                if (false === $line->load($idline)) {
-                    continue;
-                }
-
-                $subAccount = $line->getSubcuenta($data['new_code']);
+            foreach (Partida::all($where) as $line) {
+                $subAccount = $line->getSubcuenta($newCode);
                 if (empty($subAccount->idsubcuenta)) {
-                    Tools::log()->warning('subaccount-not-found', ['%subAccountCode%' => $data['new_code']]);
+                    Tools::log()->warning('subaccount-not-found', ['%subAccountCode%' => $newCode]);
                     continue;
                 }
 

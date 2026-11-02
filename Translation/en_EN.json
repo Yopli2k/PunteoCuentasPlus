@@ -1,0 +1,7 @@
+{
+    "change-account": "Sub-account Change",
+    "change-subaccount-data-error": "Information is missing to complete the account change. You must provide the new account details and the list of items to be modified.",
+    "change-subaccount-description": "<br><span class='text-danger'><b>Attention:<br>This process will replace the current sub-account for the selected items with the new sub-account. This process cannot be cancelled once it has begun.<\/b><\/span>",
+    "entry-save-error": "An error occurred while unlocking seat %code%.",
+    "partida-save-error": "An error occurred while saving the game with identifier %code%."
+}

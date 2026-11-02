@@ -1,0 +1,7 @@
+{
+    "change-account": "Canvi de subcompte",
+    "change-subaccount-data-error": "Manquen dades per completar el canvi de compte. Heu d'informar el nou compte i la llista de partides a modificar",
+    "change-subaccount-description": "<br><span class='text-danger'><b>Atenció:<br>Aquest procés substituirà el subcompte actual de les partides seleccionades pel nou subcompte. Aquest procés no es pot cancel·lar un cop iniciat.<\/b><\/span>",
+    "entry-save-error": "Hi ha hagut un error en desbloquejar el seient %code%.",
+    "partida-save-error": "Hi ha hagut un error en desar la partida amb identificador %code%."
+}
